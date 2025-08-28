@@ -6,15 +6,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import TodoItem from './TodoItem';
-import { Todo } from '../types/todo';
+import { useAppSelector } from '../store/hooks';
+import { selectAllTodos } from '../store/selectors/todoSelectors';
 
-interface TodoListProps {
-  todos: Todo[];
-  onToggle: (id: string) => void;
-  onDelete: (id: string) => void;
-}
-
-const TodoList: React.FC<TodoListProps> = ({ todos, onToggle, onDelete }) => {
+const TodoList: React.FC = () => {
+  const todos = useAppSelector(selectAllTodos);
   if (todos.length === 0) {
     return (
       <View style={styles.emptyContainer}>
@@ -33,8 +29,6 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onToggle, onDelete }) => {
           id={item.id}
           text={item.text}
           completed={item.completed}
-          onToggle={onToggle}
-          onDelete={onDelete}
         />
       )}
       style={styles.list}

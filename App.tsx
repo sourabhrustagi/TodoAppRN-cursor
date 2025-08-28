@@ -1,9 +1,9 @@
 /**
  * Todo App
- * A simple React Native todo application
+ * A simple React Native todo application with Redux
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StatusBar,
   StyleSheet,
@@ -11,67 +11,34 @@ import {
   Text,
   SafeAreaView,
 } from 'react-native';
+import { Provider } from 'react-redux';
+import { store } from './src/store';
 import { logger } from './src/utils/logger';
 import AddTodo from './src/components/AddTodo';
 import TodoList from './src/components/TodoList';
-import { Todo } from './src/types/todo';
+import TodoStats from './src/components/TodoStats';
 
-function App() {
-  logger.info('App: Starting TodoRN application');
-  
-  const [todos, setTodos] = useState<Todo[]>([]);
-
-  const addTodo = (text: string) => {
-    const newTodo: Todo = {
-      id: Date.now().toString(),
-      text,
-      completed: false,
-    };
-    setTodos([newTodo, ...todos]);
-    logger.info(`App: Added new todo: ${text}`);
-  };
-
-  const toggleTodo = (id: string) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
-    logger.info(`App: Toggled todo with id: ${id}`);
-  };
-
-  const deleteTodo = (id: string) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
-    logger.info(`App: Deleted todo with id: ${id}`);
-  };
-
-  const completedCount = todos.filter((todo) => todo.completed).length;
-  const totalCount = todos.length;
+function AppContent() {
+  logger.info('App: Starting TodoRN application with Redux');
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#F8F8F8" />
-      
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Todo App</Text>
-        {totalCount > 0 && (
-          <Text style={styles.subtitle}>
-            {completedCount} of {totalCount} completed
-          </Text>
-        )}
+        <TodoStats />
       </View>
-
-      {/* Add Todo Component */}
-      <AddTodo onAdd={addTodo} />
- 
-      {/* Todo List */}
-      <TodoList
-        todos={todos}
-        onToggle={toggleTodo}
-        onDelete={deleteTodo}
-      />
+      <AddTodo />
+      <TodoList />
     </SafeAreaView>
+  );
+}
+
+function App() {
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
   );
 }
 
@@ -92,10 +59,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333333',
     marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666666',
   },
 });
 

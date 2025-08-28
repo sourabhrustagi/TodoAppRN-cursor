@@ -9,17 +9,25 @@
     "start": "react-native start",
     "test": "jest",
     "web": "webpack serve --mode development --open",
-    "build-web": "webpack --mode production"
+    "build-web": "webpack --mode production",
+    "run:ios": "./run-app.sh ios",
+    "run:android": "./run-app.sh android",
+    "run:web": "./run-app.sh web",
+    "run:all": "./run-app.sh all",
+    "setup": "./run-app.sh setup",
+    "clean": "./run-app.sh clean"
   },
   "dependencies": {
     "@react-native/new-app-screen": "0.81.0",
+    "@reduxjs/toolkit": "^2.8.2",
     "ajv": "^8.17.1",
     "expo": "^53.0.20",
     "react": "19.1.0",
     "react-dom": "^19.1.1",
     "react-native": "0.81.0",
     "react-native-safe-area-context": "^5.5.2",
-    "react-native-web": "^0.21.0"
+    "react-native-web": "^0.21.0",
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.3",
