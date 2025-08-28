@@ -1,0 +1,115 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  pr-checks:
+    name: PR Quality Checks
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run ESLint
+      run: npm run lint
+      
+    - name: Run Prettier check
+      run: npx prettier --check "src/**/*.{ts,tsx,js,jsx}"
+      
+    - name: TypeScript type check
+      run: npx tsc --noEmit
+      
+    - name: Run tests
+      run: npm test -- --coverage --watchAll=false
+      
+    - name: Check bundle size
+      run: npm run build-web
+      
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: pr-checks
+        name: codecov-pr
+        fail_ci_if_error: false
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Dependency Review
+      uses: actions/dependency-review-action@v4
+      with:
+        fail-on-severity: moderate
+
+  pr-size-label:
+    name: PR Size Label
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: PR Size Label
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: pr } = await github.rest.pulls.get({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number,
+          });
+          
+          const changedFiles = pr.changed_files;
+          const additions = pr.additions;
+          const deletions = pr.deletions;
+          
+          let size = 'XS';
+          if (changedFiles > 10 || additions > 100 || deletions > 100) size = 'S';
+          if (changedFiles > 30 || additions > 500 || deletions > 500) size = 'M';
+          if (changedFiles > 100 || additions > 1000 || deletions > 1000) size = 'L';
+          if (changedFiles > 250 || additions > 2000 || deletions > 2000) size = 'XL';
+          if (changedFiles > 500 || additions > 5000 || deletions > 5000) size = 'XXL';
+          
+          await github.rest.issues.addLabels({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            labels: [`size/${size}`],
+          });
+          
+          console.log(`Added size/${size} label to PR #${context.issue.number}`);
+
+  auto-merge:
+    name: Auto Merge
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.auto_merge
+    needs: [pr-checks, dependency-review]
+    
+    steps:
+    - name: Enable auto-merge
+      uses: actions/github-script@v7
+      with:
+        script: |
+          await github.rest.pulls.enableAutoMerge({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number,
+            merge_method: 'squash',
+          });

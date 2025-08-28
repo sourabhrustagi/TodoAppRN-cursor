@@ -1,0 +1,107 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "sourabh"
+    assignees:
+      - "sourabh"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "automated"
+    ignore:
+      # Ignore major version updates for these packages
+      - dependency-name: "react"
+      - dependency-name: "react-native"
+      - dependency-name: "@react-native/*"
+      - dependency-name: "typescript"
+    # Group minor and patch updates together
+    groups:
+      dev-dependencies:
+        patterns:
+          - "@types/*"
+          - "@babel/*"
+          - "eslint*"
+          - "prettier*"
+          - "jest*"
+          - "webpack*"
+        update-types:
+          - "minor"
+          - "patch"
+      react-dependencies:
+        patterns:
+          - "react*"
+          - "@reduxjs/*"
+          - "react-redux"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "sourabh"
+    assignees:
+      - "sourabh"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"
+
+  # Enable version updates for Gradle (Android)
+  - package-ecosystem: "gradle"
+    directory: "/android"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "sourabh"
+    assignees:
+      - "sourabh"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "android"
+      - "automated"
+
+  # Enable version updates for CocoaPods (iOS)
+  - package-ecosystem: "cocoapods"
+    directory: "/ios"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "sourabh"
+    assignees:
+      - "sourabh"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "ios"
+      - "automated"
