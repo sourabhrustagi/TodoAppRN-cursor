@@ -7,32 +7,41 @@ import {
   StyleSheet,
 } from 'react-native';
 
-import { useAppDispatch } from '../store/hooks';
-import { addTodo } from '../store/slices/todoSlice';
-import { Todo } from '../types/todo';
+import { useCreateTodo } from '../hooks/todoHooks';
+import { validateTodoText } from '../utils/todoUtils';
+import { ERROR_MESSAGES } from '../../../shared/constants';
 
 const AddTodo: React.FC = () => {
   const [text, setText] = useState('');
-  const dispatch = useAppDispatch();
+  const [error, setError] = useState<string | null>(null);
+  const { createTodo } = useCreateTodo();
 
   const handleAdd = () => {
-    if (text.trim()) {
-      const newTodo: Todo = {
-        id: Date.now().toString(),
-        text: text.trim(),
-        completed: false,
-      };
-      dispatch(addTodo(newTodo));
+    const validation = validateTodoText(text);
+    
+    if (!validation.isValid) {
+      setError(validation.error || ERROR_MESSAGES.VALIDATION_ERROR);
+      return;
+    }
+    
+    try {
+      createTodo(text);
       setText('');
+      setError(null);
+    } catch (err) {
+      setError(ERROR_MESSAGES.UNKNOWN_ERROR);
     }
   };
 
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.input}
+        style={[styles.input, error && styles.inputError]}
         value={text}
-        onChangeText={setText}
+        onChangeText={(newText) => {
+          setText(newText);
+          if (error) setError(null);
+        }}
         placeholder="Add a new todo..."
         placeholderTextColor="#999999"
         onSubmitEditing={handleAdd}
@@ -45,6 +54,9 @@ const AddTodo: React.FC = () => {
       >
         <Text style={styles.addButtonText}>Add</Text>
       </TouchableOpacity>
+      {error && (
+        <Text style={styles.errorText}>{error}</Text>
+      )}
     </View>
   );
 };
@@ -84,6 +96,16 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+  },
+  inputError: {
+    borderColor: '#FF3B30',
+    backgroundColor: '#FFF5F5',
+  },
+  errorText: {
+    color: '#FF3B30',
+    fontSize: 14,
+    marginTop: 8,
+    marginLeft: 16,
   },
 });
 

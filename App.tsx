@@ -12,11 +12,9 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { Provider } from 'react-redux';
-import { store } from './src/store';
-import { logger } from './src/utils/logger';
-import AddTodo from './src/components/AddTodo';
-import TodoList from './src/components/TodoList';
-import TodoStats from './src/components/TodoStats';
+import { store } from './src/app/store';
+import { logger } from './src/shared/utils/logger';
+import { AddTodo, TodoList, TodoStats } from './src/features/todo';
 
 function AppContent() {
   logger.info('App: Starting TodoRN application with Redux');

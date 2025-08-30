@@ -5,8 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import { useAppDispatch } from '../store/hooks';
-import { toggleTodo, deleteTodo } from '../store/slices/todoSlice';
+import { useTodo } from '../hooks/todoHooks';
 
 interface TodoItemProps {
   id: string;
@@ -19,12 +18,13 @@ const TodoItem: React.FC<TodoItemProps> = ({
   text,
   completed,
 }) => {
-  const dispatch = useAppDispatch();
+  const { toggle, delete: deleteTodo } = useTodo(id);
+  
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.todoContainer}
-        onPress={() => dispatch(toggleTodo(id))}
+        onPress={toggle}
       >
         <View style={[styles.checkbox, completed && styles.checked]}>
           {completed && <Text style={styles.checkmark}>✓</Text>}
@@ -35,7 +35,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.deleteButton}
-        onPress={() => dispatch(deleteTodo(id))}
+        onPress={deleteTodo}
       >
         <Text style={styles.deleteText}>×</Text>
       </TouchableOpacity>

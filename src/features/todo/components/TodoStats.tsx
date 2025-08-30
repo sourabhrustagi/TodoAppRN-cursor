@@ -1,10 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useAppSelector } from '../store/hooks';
-import { selectTodoStats } from '../store/selectors/todoSelectors';
+import { useTodoSelector } from '../hooks/todoHooks';
 
 const TodoStats: React.FC = () => {
-  const stats = useAppSelector(selectTodoStats);
+  const { stats } = useTodoSelector();
 
   if (stats.total === 0) {
     return null;

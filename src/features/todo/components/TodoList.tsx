@@ -6,11 +6,10 @@ import {
   StyleSheet,
 } from 'react-native';
 import TodoItem from './TodoItem';
-import { useAppSelector } from '../store/hooks';
-import { selectAllTodos } from '../store/selectors/todoSelectors';
+import { useTodoSelector } from '../hooks/todoHooks';
 
 const TodoList: React.FC = () => {
-  const todos = useAppSelector(selectAllTodos);
+  const { todos } = useTodoSelector();
   if (todos.length === 0) {
     return (
       <View style={styles.emptyContainer}>
