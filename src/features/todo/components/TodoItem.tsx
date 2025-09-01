@@ -6,19 +6,29 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useTodo } from '../hooks/todoHooks';
+import { logger } from '../../../shared/utils/logger';
 
 interface TodoItemProps {
   id: string;
   text: string;
   completed: boolean;
+  onDeletePress: (id: string, text: string) => void;
 }
 
 const TodoItem: React.FC<TodoItemProps> = ({
   id,
   text,
   completed,
+  onDeletePress,
 }) => {
-  const { toggle, delete: deleteTodo } = useTodo(id);
+  const { toggle } = useTodo(id);
+  
+  const handleDeletePress = () => {
+    logger.info(`[TodoItem] Delete button pressed for todo: "${text}" (ID: ${id})`);
+    logger.info(`[TodoItem] Todo completion status before deletion: ${completed ? 'completed' : 'pending'}`);
+    onDeletePress(id, text);
+    logger.info(`[TodoItem] Delete operation initiated for todo: "${text}"`);
+  };
   
   return (
     <View style={styles.container}>
@@ -35,7 +45,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.deleteButton}
-        onPress={deleteTodo}
+        onPress={handleDeletePress}
       >
         <Text style={styles.deleteText}>×</Text>
       </TouchableOpacity>

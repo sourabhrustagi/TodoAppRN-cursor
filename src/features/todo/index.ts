@@ -7,7 +7,7 @@ export { default as TodoList } from './components/TodoList';
 export { default as TodoStats } from './components/TodoStats';
 
 // Hooks
-export { useTodoSelector, useTodo, useCreateTodo } from './hooks/todoHooks';
+export { useTodoSelector, useTodo, useCreateTodo, useTodoBulkActions } from './hooks/todoHooks';
 
 // Types
 export type { Todo } from './types/todo';
@@ -23,4 +23,5 @@ export {
   addTodo,
   toggleTodo,
   deleteTodo,
+  clearTodos,
 } from './todoSlice';

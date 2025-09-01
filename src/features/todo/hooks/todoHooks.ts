@@ -7,6 +7,7 @@ import {
   addTodo,
   toggleTodo,
   deleteTodo,
+  clearTodos,
 } from '../todoSlice';
 import type { Todo } from '../types/todo';
 
@@ -46,5 +47,14 @@ export const useCreateTodo = () => {
       dispatch(addTodo(newTodo));
       return newTodo;
     },
+  };
+};
+
+// Hook for bulk todo operations
+export const useTodoBulkActions = () => {
+  const dispatch = useAppDispatch();
+  
+  return {
+    clearAllTodos: () => dispatch(clearTodos()),
   };
 };

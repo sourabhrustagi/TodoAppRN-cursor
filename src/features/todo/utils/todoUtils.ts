@@ -1,4 +1,3 @@
-import type { Todo } from '../types/todo';
 import { VALIDATION } from '../../../shared/constants';
 
 /**
